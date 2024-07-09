@@ -6,9 +6,8 @@ class VKAPIClient:
 
     API_BASE_URL = 'https://api.vk.com/method'
 
-    def __init__(self, token, user_id):
+    def __init__(self, token):
         self.token = token
-        self.user_id = user_id
 
     def get_common_params(self):
         return{
@@ -19,7 +18,9 @@ class VKAPIClient:
     def _build_url(self, api_method):
         return f'{self.API_BASE_URL}/{api_method}'
     
-    def get_profile_photo(self):
+    def get_profile_photo(self, user_id):
+        self.user_id = user_id
+        
         params = self.get_common_params()
         params.update({'owner_id': self.user_id, 'album_id': 'profile','extended':'likes'})
         response = requests.get(self._build_url('photos.get'), params=params)
@@ -30,6 +31,7 @@ class VKAPIClient:
         return response.json()
     
     def maximum_size_photo_links(self, profile_photo):
+
         maximum_size_photo = []
 
         photos = profile_photo["response"]["items"]
@@ -39,6 +41,7 @@ class VKAPIClient:
         return maximum_size_photo
     
     def maximum_size_photo_likes(self, profile_photo):
+
         maximum_size_photo_likes = []
 
         photos = profile_photo["response"]["items"]
@@ -48,6 +51,7 @@ class VKAPIClient:
         return maximum_size_photo_likes
     
     def maximum_size_photo_date(self, profile_photo):
+
         maximum_size_photo_date = []
 
         photos = profile_photo["response"]["items"]
@@ -59,18 +63,20 @@ class VKAPIClient:
 
         return maximum_size_photo_date
     
-    def unique_names(self, likes , date):
+    def unique_names(self, likes , dates):
+
         unque_name = []
 
-        for l ,d in zip(likes, date): 
-            if l in unque_name:
-                unque_name.append(d)
+        for like ,date in zip(likes, dates): 
+            if like in unque_name:
+                unque_name.append(date)
             else:
-                unque_name.append(l)
+                unque_name.append(like)
 
         return unque_name
     
     def info_photo (self, name, type):
+
         info_photo = []
 
         for n,t in zip(name, type):
